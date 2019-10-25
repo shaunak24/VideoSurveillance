@@ -1,5 +1,6 @@
 package android.example.com.videosurveillance;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -7,9 +8,9 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Toast;
-
-import com.longdo.mjpegviewer.MjpegView;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -26,7 +27,7 @@ import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
 
-    private MjpegView videoView;
+    private WebView videoView;
     private GestureDetector gestureDetector;
     private View.OnTouchListener gestureListener;
     private String direction;
@@ -56,15 +57,20 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         videoView.setOnTouchListener(gestureListener);
+        videoView.setWebViewClient(new myWebClient());
+        videoView.getSettings().setJavaScriptEnabled(true);
+        videoView.loadUrl("http://192.168.43.100:8000/stream.mjpg");
 
 //        Uri uri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.video);
 //        videoView.setVideoURI(uri);
-//        videoView.setVideoPath("http://192.168.43.100:8000/");
+//        //"http://192.168.43.100:8000/stream.mjpg"
+//        //"http://videocdn.bodybuilding.com/video/mp4/62000/62792m.mp4"
+//        videoView.setVideoPath("http://192.168.43.100:8000/stream.mjpg");
 //        videoView.start();
-        videoView.setMode(MjpegView.MODE_FIT_WIDTH);
-        videoView.setAdjustHeight(true);
-        videoView.setUrl("http://192.168.43.100:8000/");
-        videoView.startStream();
+//        videoView.setMode(MjpegView.MODE_FIT_WIDTH);
+//        videoView.setAdjustHeight(true);
+//        videoView.setUrl("http://192.168.43.100:8000/stream.mjpg");
+//        videoView.startStream();
     }
 
     class SwipeGestureDetector extends GestureDetector.SimpleOnGestureListener {
@@ -125,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
             // send direction, motion coordinates
-            //sendCoordinates();
+            sendCoordinates();
             return false;
         }
 
@@ -137,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void sendCoordinates() {
-        String url = "http://192.168.93.250:8000/";
+        String url = "http://192.168.43.250:8000/control/values/";
         RequestBody requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM)
                 .addFormDataPart("direction", direction)
                 .addFormDataPart("motion", motion)
@@ -151,8 +157,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-
+            public void onResponse(@NotNull Call call, @NotNull Response response) {
             }
         });
     }
@@ -185,5 +190,19 @@ public class MainActivity extends AppCompatActivity {
             return null;
         }
     }
+    public class myWebClient extends WebViewClient
+    {
+        @Override
+        public void onPageStarted(WebView view, String url, Bitmap favicon) {
+            // TODO Auto-generated method stub
+            super.onPageStarted(view, url, favicon);
+        }
 
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            // TODO Auto-generated method stub
+            view.loadUrl(url);
+            return true;
+        }
+    }
 }

@@ -27,4 +27,6 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation 'com.squareup.retrofit2:retrofit:2.5.0'
     implementation 'com.squareup.okhttp3:okhttp:4.2.1'
-    implementation 'com.github.perthcpe23:mjpegviewer:1.0.7'}
+    implementation 'com.github.HonzaR:android-mjpeg-view:v1.0.4'
+    implementation 'me.neavo:vitamio:4.2.2'
+}
